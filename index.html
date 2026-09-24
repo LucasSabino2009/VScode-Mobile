@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <title>Code AI Mobile</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- JSZip: usado para exportar/importar projetos em .zip (js/zip.js) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+  <div id="app">
+
+    <!-- ===== HEADER ===== -->
+    <header class="topbar">
+      <button class="icon-btn" id="btn-menu" data-icon="menu" aria-label="Abrir explorador"></button>
+      <div class="topbar-title">
+        <span class="app-name">Code AI Mobile</span>
+        <span class="project-name" id="project-name">MeuProjeto</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="save-indicator" id="save-indicator" title="Estado do salvamento">Salvo</span>
+        <button class="icon-btn" id="btn-ai-top" data-icon="ai" aria-label="Abrir assistente de IA"></button>
+      </div>
+    </header>
+
+    <!-- ===== FILE TABS ===== -->
+    <nav class="tabbar" id="tabbar" aria-label="Arquivos abertos"></nav>
+
+    <!-- ===== EDITOR AREA ===== -->
+    <main class="editor-area">
+      <div class="cm-host" id="cm-host"></div>
+    </main>
+
+    <!-- ===== BOTTOM PANELS (Problemas / Terminal / Console) ===== -->
+    <section class="bottom-panel" id="bottom-panel" aria-hidden="true">
+      <div class="bottom-panel-tabs">
+        <button class="bp-tab active" data-panel="problems">Problemas</button>
+        <button class="bp-tab" data-panel="terminal">Terminal</button>
+        <button class="bp-tab" data-panel="console">Console</button>
+        <button class="icon-btn small bp-close" id="btn-close-bottom" aria-label="Fechar painel">✕</button>
+      </div>
+      <div class="bottom-panel-body">
+        <div class="bp-view active" id="bp-problems"></div>
+        <div class="bp-view" id="bp-terminal">
+          <div class="terminal-output" id="terminal-output"></div>
+          <div class="terminal-input-row">
+            <span class="terminal-prompt">$</span>
+            <input type="text" id="terminal-input" class="terminal-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="help" />
+          </div>
+        </div>
+        <div class="bp-view" id="bp-console"></div>
+      </div>
+    </section>
+
+    <!-- ===== STATUS BAR ===== -->
+    <div class="statusbar">
+      <div class="statusbar-left">
+        <button class="status-chip" id="status-problems">0 problemas</button>
+      </div>
+      <div class="statusbar-right">
+        <span id="status-lang">HTML</span>
+        <span id="status-pos">Ln 1, Col 1</span>
+      </div>
+    </div>
+
+    <!-- ===== ACTIVITY BAR (lateral, ícones da IDE) ===== -->
+    <nav class="activitybar" aria-label="Barra de atividades">
+      <button class="ab-btn active" id="ab-explorer" aria-label="Explorador" data-icon="explorer"></button>
+      <button class="ab-btn" id="ab-search" aria-label="Buscar" data-icon="search"></button>
+      <button class="ab-btn" id="ab-source-control" aria-label="Controle de versão" data-icon="sourceControl"></button>
+      <button class="ab-btn" id="ab-run" aria-label="Executar / Preview" data-icon="run"></button>
+      <button class="ab-btn" id="ab-problems" aria-label="Problemas" data-icon="problems"></button>
+      <button class="ab-btn" id="ab-terminal" aria-label="Terminal" data-icon="terminal"></button>
+      <button class="ab-btn" id="ab-extensions" aria-label="Extensões" data-icon="extensions"></button>
+      <span class="ab-spacer"></span>
+      <button class="ab-btn" id="ab-ai" aria-label="Assistente de IA" data-icon="ai"></button>
+      <button class="ab-btn" id="ab-settings" aria-label="Configurações" data-icon="settings"></button>
+    </nav>
+
+    <!-- ===== SIDEBAR: EXPLORADOR ===== -->
+    <aside class="sidebar" id="sidebar" aria-hidden="true">
+      <div class="sidebar-header">
+        <span id="sidebar-title">EXPLORADOR</span>
+        <div class="sidebar-header-actions">
+          <button class="icon-btn small" id="btn-new-file" data-icon="plusFile" aria-label="Novo arquivo"></button>
+          <button class="icon-btn small" id="btn-new-folder" data-icon="plusFolder" aria-label="Nova pasta"></button>
+          <button class="icon-btn small" id="btn-import-zip" data-icon="upload" aria-label="Importar projeto (.zip)"></button>
+          <button class="icon-btn small" id="btn-export-zip" data-icon="download" aria-label="Exportar projeto (.zip)"></button>
+          <button class="icon-btn small" id="btn-close-sidebar" data-icon="close" aria-label="Fechar explorador"></button>
+        </div>
+      </div>
+      <div class="sidebar-projectbar">
+        <select id="project-select" class="project-select"></select>
+        <button class="icon-btn small" id="btn-new-project" aria-label="Novo projeto">+</button>
+      </div>
+      <div class="sidebar-tree" id="sidebar-tree"></div>
+      <div class="sidebar-cloud-section">
+        <div class="sidebar-cloud-header" data-icon="cloud">ONEDRIVE</div>
+        <div class="sidebar-cloud-status" id="onedrive-status">Não conectado (veja Configurações → Armazenamento)</div>
+      </div>
+      <input type="file" id="zip-input" accept=".zip" hidden />
+    </aside>
+    <div class="scrim" id="sidebar-scrim"></div>
+
+    <!-- ===== PAINEL: BUSCA GLOBAL (stub simples, busca no arquivo ativo via CodeMirror) ===== -->
+    <aside class="sidebar" id="search-panel" aria-hidden="true">
+      <div class="sidebar-header">
+        <span>BUSCAR / SUBSTITUIR</span>
+        <button class="icon-btn small" id="btn-close-search" data-icon="close" aria-label="Fechar busca"></button>
+      </div>
+      <div class="search-panel-body">
+        <p class="hint-text">A busca e substituição abrem no editor (Ctrl+F / painel nativo do CodeMirror), pesquisando no arquivo aberto no momento.</p>
+        <button class="modal-btn primary" id="btn-open-cm-search">Abrir busca no arquivo atual</button>
+      </div>
+    </aside>
+
+    <!-- ===== PAINEL: ASSISTENTE DE IA ===== -->
+    <section class="ai-panel" id="ai-panel" aria-hidden="true">
+      <div class="ai-panel-header">
+        <span>ASSISTENTE</span>
+        <button class="icon-btn small" id="btn-close-ai" data-icon="close" aria-label="Fechar assistente"></button>
+      </div>
+
+      <div class="ai-quick-actions">
+        <button class="ai-action" data-action="explicar">Explicar</button>
+        <button class="ai-action" data-action="corrigir">Corrigir</button>
+        <button class="ai-action" data-action="melhorar">Melhorar</button>
+        <button class="ai-action" data-action="encontrar bugs">Bugs</button>
+        <button class="ai-action" data-action="gerar">Gerar</button>
+        <button class="ai-action" data-action="documentar">Documentar</button>
+        <button class="ai-action" data-action="refatorar">Refatorar</button>
+        <button class="ai-action" data-action="ensinar">Ensinar</button>
+      </div>
+
+      <div class="ai-messages" id="ai-messages"></div>
+
+      <form class="ai-input-row" id="ai-form">
+        <input type="text" id="ai-input" class="ai-input" placeholder="Pergunte algo sobre o código..." autocomplete="off" />
+        <button type="submit" class="ai-send" data-icon="send" aria-label="Enviar pergunta"></button>
+      </form>
+    </section>
+    <div class="scrim" id="ai-scrim"></div>
+
+    <!-- ===== PAINEL: PREVIEW ===== -->
+    <section class="preview-panel" id="preview-panel" aria-hidden="true">
+      <div class="preview-header">
+        <span id="preview-title">PREVIEW — index.html</span>
+        <div class="preview-header-actions">
+          <button class="icon-btn small" id="btn-fullscreen-preview" data-icon="fullscreen" aria-label="Tela cheia"></button>
+          <button class="icon-btn small" id="btn-refresh-preview" data-icon="refresh" aria-label="Atualizar preview"></button>
+          <button class="icon-btn small" id="btn-close-preview" data-icon="close" aria-label="Fechar preview"></button>
+        </div>
+      </div>
+      <iframe id="preview-frame" class="preview-frame" sandbox="allow-scripts" title="Preview do projeto"></iframe>
+    </section>
+
+    <!-- ===== PAINEL: CONFIGURAÇÕES ===== -->
+    <section class="settings-panel" id="settings-panel" aria-hidden="true">
+      <div class="settings-header">
+        <span>CONFIGURAÇÕES</span>
+        <button class="icon-btn small" id="btn-close-settings" data-icon="close" aria-label="Fechar configurações"></button>
+      </div>
+      <div class="settings-body" id="settings-body"></div>
+    </section>
+    <div class="scrim" id="settings-scrim"></div>
+
+    <!-- ===== MODAL: NOVO ARQUIVO / PASTA / RENOMEAR / PROJETO ===== -->
+    <div class="modal-scrim" id="modal-scrim"></div>
+    <div class="modal" id="new-item-modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="modal-title" id="modal-title">Novo arquivo</div>
+      <input type="text" id="modal-input" class="modal-input" placeholder="nome.html" autocapitalize="off" autocomplete="off" spellcheck="false" />
+      <div class="modal-hint" id="modal-hint">Use a extensão para definir o tipo: .html, .css, .js, .json...</div>
+      <div class="modal-actions">
+        <button class="modal-btn" id="modal-cancel">Cancelar</button>
+        <button class="modal-btn primary" id="modal-confirm">Criar</button>
+      </div>
+    </div>
+
+    <!-- ===== MODAL: CONFIRMAÇÃO (excluir, sobrescrever, sair sem salvar) ===== -->
+    <div class="modal" id="confirm-modal" role="alertdialog" aria-modal="true" aria-hidden="true">
+      <div class="modal-title" id="confirm-title">Confirmar</div>
+      <div class="modal-message" id="confirm-message"></div>
+      <div class="modal-actions">
+        <button class="modal-btn" id="confirm-cancel">Cancelar</button>
+        <button class="modal-btn danger" id="confirm-ok">Confirmar</button>
+      </div>
+    </div>
+
+    <!-- ===== MENU DE CONTEXTO (arquivo/pasta) ===== -->
+    <div class="context-menu" id="context-menu" aria-hidden="true"></div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ===== BOTTOM NAV ===== -->
+    <nav class="bottombar" aria-label="Navegação principal">
+      <button class="bottom-btn" id="nav-files" data-icon="explorer" aria-label="Arquivos"></button>
+      <button class="bottom-btn" id="nav-search" data-icon="search" aria-label="Buscar"></button>
+      <button class="bottom-btn" id="nav-run" data-icon="run" aria-label="Executar preview"></button>
+      <button class="bottom-btn" id="nav-ai" data-icon="ai" aria-label="Assistente de IA"></button>
+      <button class="bottom-btn" id="nav-settings" data-icon="settings" aria-label="Configurações"></button>
+    </nav>
+
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
