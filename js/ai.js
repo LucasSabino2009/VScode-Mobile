@@ -39,7 +39,7 @@ export function buildActionPrompt(action, ctx) {
   return fn ? fn(ctx) : `${action}\n\nArquivo: ${ctx.fileName}\n\`\`\`${ctx.lang}\n${ctx.code}\n\`\`\``;
 }
 
-const SYSTEM_PROMPT = `Você é o assistente de IA integrado ao "Code AI Mobile", uma IDE para celular. Você recebe o código do arquivo atual, possivelmente um trecho selecionado, os problemas detectados pelo linter e informações do projeto. Responda em português do Brasil, de forma direta. Quando entregar código para substituir um arquivo inteiro, use um único bloco de código contendo o arquivo completo, sem comentários de "resto do código inalterado".`;
+const SYSTEM_PROMPT = `Você é o assistente de IA integrado ao "Codivex", uma IDE para celular. Você recebe o código do arquivo atual, possivelmente um trecho selecionado, os problemas detectados pelo linter e informações do projeto. Responda em português do Brasil, de forma direta. Quando entregar código para substituir um arquivo inteiro, use um único bloco de código contendo o arquivo completo, sem comentários de "resto do código inalterado".`;
 
 export async function askAI({ provider, apiKey, model, baseUrl, systemPrompt, userMessage, context }) {
   if (!apiKey) {

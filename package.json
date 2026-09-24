@@ -1,7 +1,7 @@
 {
-  "name": "code-ai-mobile",
+  "name": "codivex",
   "version": "0.9.0",
-  "description": "IDE mobile com assistente de IA integrado. Editor CodeMirror 6, lint real, explorer com IndexedDB, export/import ZIP, preview e IA com chave própria. Sem passo de build; dependências carregadas via CDN em runtime (requer internet no dispositivo).",
+  "description": "Codivex: IDE mobile com assistente de IA integrado. Editor CodeMirror 6, lint real, explorer com IndexedDB, export/import ZIP, preview e IA com chave própria. Sem passo de build; dependências carregadas via CDN em runtime (requer internet no dispositivo).",
   "private": true,
   "scripts": {
     "start": "npx --yes serve . -l 5173",

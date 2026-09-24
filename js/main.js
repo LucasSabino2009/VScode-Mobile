@@ -760,7 +760,7 @@ async function seedInitialProject() {
   const jsFolder = (await DB.listNodes(project.id)).find((n) => n.name === "js");
   await DB.createNode({
     projectId: project.id, parentId: null, type: "file", name: "index.html", ext: "html", lang: "HTML",
-    content: '<!DOCTYPE html>\n<html lang="pt-BR">\n  <head>\n    <meta charset="UTF-8" />\n    <title>Meu Projeto</title>\n    <link rel="stylesheet" href="css/style.css" />\n  </head>\n  <body>\n    <h1>Olá, Code AI Mobile!</h1>\n    <script src="js/app.js"><\/script>\n  </body>\n</html>\n',
+    content: '<!DOCTYPE html>\n<html lang="pt-BR">\n  <head>\n    <meta charset="UTF-8" />\n    <title>Meu Projeto</title>\n    <link rel="stylesheet" href="css/style.css" />\n  </head>\n  <body>\n    <h1>Olá, Codivex!</h1>\n    <script src="js/app.js"><\/script>\n  </body>\n</html>\n',
   });
   await DB.createNode({
     projectId: project.id, parentId: cssFolder.id, type: "file", name: "style.css", ext: "css", lang: "CSS",

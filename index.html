@@ -2,10 +2,42 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
-  <title>Code AI Mobile</title>
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
+  />
+
+  <title>Codivex</title>
+
+  <!-- Ícone do navegador -->
+  <link
+    rel="icon"
+    type="image/jpeg"
+    href="imag/icone_navegador.jpeg"
+  />
+
+  <!-- Ícone para instalação como aplicativo -->
+  <link
+    rel="apple-touch-icon"
+    href="imag/icone_app.jpeg"
+  />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <meta name="theme-color" content="#050817">
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="black-translucent"
+  >
+
   <link rel="stylesheet" href="css/style.css" />
-  <!-- JSZip: usado para exportar/importar projetos em .zip (js/zip.js) -->
+
+  <!-- JSZip -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
@@ -15,7 +47,7 @@
     <header class="topbar">
       <button class="icon-btn" id="btn-menu" data-icon="menu" aria-label="Abrir explorador"></button>
       <div class="topbar-title">
-        <span class="app-name">Code AI Mobile</span>
+        <span class="app-name">Codivex</span>
         <span class="project-name" id="project-name">MeuProjeto</span>
       </div>
       <div class="topbar-actions">
@@ -205,5 +237,7 @@
   </div>
 
   <script type="module" src="js/main.js"></script>
+  <script src="js/pwa.js" defer></script>
+
 </body>
 </html>

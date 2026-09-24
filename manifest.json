@@ -1,0 +1,26 @@
+{
+  "name": "Codivex — Mobile Code IDE",
+  "short_name": "Codivex",
+  "description": "IDE mobile para desenvolvimento com editor de código, preview e assistência de IA.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#050817",
+  "theme_color": "#050817",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "imag/icone_app.jpeg",
+      "sizes": "1254x1254",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "imag/icone_navegador.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
